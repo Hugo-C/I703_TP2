@@ -17,5 +17,7 @@ public class Main {
         Arbre res = (Arbre) p.parse().value;  // on récupère l'arbre abstrait généré par cup
         System.out.println(res);
         System.out.println("Done");
+
+        res.toAsmFile("Test.asm");
     }
 }

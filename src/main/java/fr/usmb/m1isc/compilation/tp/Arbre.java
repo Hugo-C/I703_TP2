@@ -1,5 +1,11 @@
 package fr.usmb.m1isc.compilation.tp;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Arbre binaire qui contient une donnée quelconque
  */
@@ -8,6 +14,12 @@ public class Arbre {
     private Object valeur;
     private Arbre filsGauche;
     private Arbre filsDroit;
+
+    private static final String DATA_BEGIN = "DATA SEGMENT\n";
+    private static final String DATA_END = "DATA ENDS\n";
+
+    private static final String CODE_BEGIN = "CODE SEGMENT\n";
+    private static final String CODE_END = "CODE ENDS\n";
 
     /**
      * Crée une feuille (arbre sans fils)
@@ -73,5 +85,68 @@ public class Arbre {
             res += ")";
         }
         return res;
+    }
+
+    public Set<String> getVariables(){
+        Set<String> res = new HashSet<String>();
+        if (valeur == "let"){
+            res.add((String)filsGauche.valeur);
+        }
+        if (filsDroit != null) res.addAll(filsDroit.getVariables());
+        if (filsGauche != null) res.addAll(filsGauche.getVariables());
+        return res;
+    }
+
+    public String generer(){
+        String res = "";
+        if (valeur.getClass() == String.class) {
+            switch ((String) valeur) {
+                case ";":
+                    res = filsGauche.generer();
+                    res += filsDroit.generer();
+                    break;
+                case "let":
+                    res = filsDroit.generer();
+                    res += "mov "+(String)filsGauche.valeur+", eax\n";
+                    break;
+                case "+":
+                    res = filsGauche.generer();
+                    res += filsDroit.generer();
+                    res += "pop ebx\nadd eax, ebx\npush eax\n";
+                    break;
+                case "*":
+                    res = filsGauche.generer();
+                    res += filsDroit.generer();
+                    res += "pop ebx\nmul eax, ebx\npush eax\n";
+                    break;
+                case "/":
+                    res = filsGauche.generer();
+                    res += filsDroit.generer();
+                    res += "pop ebx\ndiv ebx, eax\nmov eax, ebx\n";
+                    break;
+                    default:
+                        res = "push eax\n";
+            }
+        }
+        else if (valeur.getClass() == Integer.class){
+            res = "mov eax, "+valeur+"\n";
+        }
+        return res;
+    }
+
+    public void toAsmFile(String fileName) throws IOException {
+        BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
+
+        writer.write(DATA_BEGIN);
+        Set<String> varibales = this.getVariables();
+        for (String var : varibales ){
+            writer.write("\t" + var + " DD\n");
+        }
+        writer.write(DATA_END);
+        writer.write(CODE_BEGIN);
+        writer.write(generer());
+        writer.write(CODE_END);
+
+        writer.close();
     }
 }
