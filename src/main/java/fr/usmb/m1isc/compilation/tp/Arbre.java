@@ -133,6 +133,16 @@ public class Arbre {
                             "\tdiv ebx, eax\n" +
                             "\tmov eax, ebx\n";
                     break;
+                case "%":
+                    res = filsDroit.generer();
+                    res += "\tpush eax\n";
+                    res += filsGauche.generer();
+                    res += "\tpop ebx\n" +
+                            "\tmov ecx, eax\n" +
+                            "\tdiv ecx, ebx\n" +
+                            "\tmul ecx, ebx\n" +
+                            "\tsub eax, ecx\n";
+                    break;
                 case "<":
                     res = filsGauche.generer();
                     res += "\tpush eax\n";
