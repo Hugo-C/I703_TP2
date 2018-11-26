@@ -111,21 +111,24 @@ public class Arbre {
                     break;
                 case "+":
                     res = filsGauche.generer();
+                    res += "\tpush eax\n";
                     res += filsDroit.generer();
-                    res += "\tpop ebx\n\tadd eax, ebx\n\tpush eax\n";
+                    res += "\tpop ebx\n\tadd eax, ebx\n";
                     break;
                 case "*":
                     res = filsGauche.generer();
+                    res += "\tpush eax\n";
                     res += filsDroit.generer();
-                    res += "\tpop ebx\n\tmul eax, ebx\n\tpush eax\n";
+                    res += "\tpop ebx\n\tmul eax, ebx\n";
                     break;
                 case "/":
                     res = filsGauche.generer();
+                    res += "\tpush eax\n";
                     res += filsDroit.generer();
                     res += "\tpop ebx\n\tdiv ebx, eax\n\tmov eax, ebx\n";
                     break;
                     default:
-                        res = "\tpush eax\n";
+                        res = "\tmov eax, " + valeur + "\n";
             }
         }
         else if (valeur.getClass() == Integer.class){
