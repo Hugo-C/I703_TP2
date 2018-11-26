@@ -234,6 +234,19 @@ public class Arbre {
                     res += filsDroit.filsDroit.generer(); //deuxième expression (else)
                     res += "sortie_" + etq_tmp + " :\n";
                     break;
+                case "||":
+                    res = filsGauche.generer();
+                    res += "\tpush eax\n";
+                    res += filsDroit.generer();
+                    res += "\tpop ebx\n" +
+                            "\tadd eax, ebx\n" +
+                            "\tjg cas" + etq + "\n" +
+                            "\tmov eax, 0\n" +
+                            "\tjmp sortie" + etq + "\n" +
+                            "cas" + etq + " :\n" +
+                            "\tmov eax, 1\n" +
+                            "sortie" + etq + " :\n";
+                    break;
                     default:
                         res = "\tmov eax, " + valeur + "\n";
             }
