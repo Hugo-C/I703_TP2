@@ -21,6 +21,8 @@ public class Arbre {
     private static final String CODE_BEGIN = "CODE SEGMENT\n";
     private static final String CODE_END = "CODE ENDS\n";
 
+    private static int etq = 0;
+
     /**
      * Crée une feuille (arbre sans fils)
      *
@@ -113,19 +115,54 @@ public class Arbre {
                     res = filsGauche.generer();
                     res += "\tpush eax\n";
                     res += filsDroit.generer();
-                    res += "\tpop ebx\n\tadd eax, ebx\n";
+                    res += "\tpop ebx\n" +
+                            "\tadd eax, ebx\n";
                     break;
                 case "*":
                     res = filsGauche.generer();
                     res += "\tpush eax\n";
                     res += filsDroit.generer();
-                    res += "\tpop ebx\n\tmul eax, ebx\n";
+                    res += "\tpop ebx\n" +
+                            "\tmul eax, ebx\n";
                     break;
                 case "/":
                     res = filsGauche.generer();
                     res += "\tpush eax\n";
                     res += filsDroit.generer();
-                    res += "\tpop ebx\n\tdiv ebx, eax\n\tmov eax, ebx\n";
+                    res += "\tpop ebx\n" +
+                            "\tdiv ebx, eax\n" +
+                            "\tmov eax, ebx\n";
+                    break;
+                case "<":
+                    res = filsGauche.generer();
+                    res += "\tpush eax\n";
+                    res += filsDroit.generer();
+                    res += "\tpop ebx\n" +
+                            "\tsub ebx, eax\n" +
+                            "\tjl vrai_" + etq + "\n" +
+                            "\tmov eax, 0\n" +
+                            "\tjmp fin_" + etq + "\n" +
+                            "vrai_" + etq + " :\n" +
+                            "\tmov eax, 1\n" +
+                            "fin_" + etq + " :\n";
+                    etq++;
+                    break;
+                case "OUTPUT":
+                    res = filsGauche.generer();
+                    res += "\tout eax\n";
+                    break;
+                case "INPUT":
+                    res = "\tin eax\n";
+                    break;
+                case "while":
+                    int etq_temp = etq;
+                    etq++;
+                    res = "debut_cond_" + etq_temp + " :\n";
+                    res += filsGauche.generer();
+                    res += "\tjz sortie_" + etq_temp + "\n";
+                    res += filsDroit.generer();
+                    res += "\tjmp debut_cond_" + etq_temp + "\n" +
+                            "sortie_" + etq_temp + " :\n";
                     break;
                     default:
                         res = "\tmov eax, " + valeur + "\n";
