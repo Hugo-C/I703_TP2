@@ -18,6 +18,10 @@ public class Main {
         System.out.println(res);
         System.out.println("Done");
 
-        res.toAsmFile("Test.asm");
+        if(args.length <= 1){
+            System.err.println("Veuillez rentrer un fichier de sortie");
+        } else {
+            res.toAsmFile(args[1]);
+        }
     }
 }
