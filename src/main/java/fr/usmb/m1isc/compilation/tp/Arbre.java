@@ -240,14 +240,30 @@ public class Arbre {
                     res += filsDroit.generer();
                     res += "\tpop ebx\n" +
                             "\tadd eax, ebx\n" +
-                            "\tjg cas" + etq + "\n" +
+                            "\tjg casOU" + etq + "\n" +
                             "\tmov eax, 0\n" +
-                            "\tjmp sortie" + etq + "\n" +
-                            "cas" + etq + " :\n" +
+                            "\tjmp sortieOU" + etq + "\n" +
+                            "casOU" + etq + " :\n" +
                             "\tmov eax, 1\n" +
-                            "sortie" + etq + " :\n";
+                            "sortieOU" + etq + " :\n";
+                    etq++;
                     break;
-                    default:
+                case "&&":
+                    System.out.println("WOW");
+                    res = filsGauche.generer();
+                    res += "\tpush eax\n";
+                    res += filsDroit.generer();
+                    res += "\tpop ebx\n" +
+                            "\tmul eax, ebx\n" +       // on évalue les booleans
+                            "\tjz casET" + etq + "\n" +  // si l'un deux est faux (0), on saute pour renvoyer 0
+                            "\tmov eax, 1\n" +         // sinon on renvoie vrai (1)
+                            "\tjmp sortieET" + etq + "\n" +
+                            "casET" + etq + " :\n" +
+                            "\tmov eax, 0\n" +
+                            "sortieET" + etq + " :\n";
+                    etq++;
+                    break;
+                    default:  // la valeur est une variable
                         res = "\tmov eax, " + valeur + "\n";
             }
         }
