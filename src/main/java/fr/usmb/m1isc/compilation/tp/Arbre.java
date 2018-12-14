@@ -69,13 +69,20 @@ public class Arbre {
         return res;
     }
 
+    /**
+     * Récupère l'ensemble des variables utilisées dans l'arbre abstrait
+     * @return un set des variables
+     */
     public Set<String> getVariables(){
         Set<String> res = new HashSet<>();
-        if (type == TypeNoeud.LET){
+        if (type == TypeNoeud.LET)
             res.add((String)valeur);
-        }
-        if (filsDroit != null) res.addAll(filsDroit.getVariables());
-        if (filsGauche != null) res.addAll(filsGauche.getVariables());
+
+        // Appelle la fonction récursivement sur ses fils
+        if (filsDroit != null)
+            res.addAll(filsDroit.getVariables());
+        if (filsGauche != null)
+            res.addAll(filsGauche.getVariables());
         return res;
     }
 
@@ -252,6 +259,11 @@ public class Arbre {
         return res;
     }
 
+    /**
+     * Génere un code assembleur à partir de l'arbre abstrait courant
+     * @param fileName : le fichier où sera écris le code généré
+     * @throws IOException : exception levée en cas de problème lors de l'écriture dans le fichier
+     */
     public void toAsmFile(String fileName) throws IOException {
         BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
 
